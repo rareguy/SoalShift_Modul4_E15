@@ -86,8 +86,8 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 		int result2 = mkdir(ay, ACCESSPERMS);
 		if(result2 == -1)
 		{
-			printf("bing\n");
-			return -errno;
+			printf("Direktori sudah ada\n");
+//			chmod(ay, ACCESSPERMS);
 		}
 		strcat(end, fpath);
 		strcat(end, ".ditandai");
@@ -97,10 +97,18 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 			return -errno;
 		strcat(cmd, "mv ");
 		strcat(cmd, fpath);
-		strcat(cmd, " ");
+		strcat(cmd, ".ditandai ");
 		strcat(cmd, ay);
 		system(cmd);
-		chmod(ay, 0000);
+		char *name = basename(fpath);
+		char filenya[200];
+		strcat(filenya, ay);
+		strcat(filenya, "/");
+		strcat(filenya, name);
+		strcat(filenya, ".ditandai");
+		int result3 = chmod(filenya, 0000);
+		if(result3 == -1)
+			return -errno;
 		return 0;
 	}
 	int res = 0;
