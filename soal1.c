@@ -12,13 +12,13 @@ static const char *dirpath = "/home/rifqi/Documents";
 
 static int xmp_getattr(const char *path, struct stat *stbuf)
 {
-	printf("%s", path);
+	printf("%s\n", path);
   	int res;
 	char fpath[1000];
 	sprintf(fpath,"%s%s",dirpath,path);
-	char *ptr = strstr(fpath, ".ditandai");
-	if(ptr != NULL)
-		*ptr = '\0';
+//	char *ptr = strstr(fpath, ".ditandai");
+//	if(ptr != NULL)
+//		*ptr = '\0';
 	res = lstat(fpath, stbuf);
 
 	if (res == -1)
@@ -54,8 +54,8 @@ static int xmp_readdir(const char *path, void *buf, fuse_fill_dir_t filler,
 		memset(&st, 0, sizeof(st));
 		st.st_ino = de->d_ino;
 		st.st_mode = de->d_type << 12;
-		if(strstr(de->d_name, ".pdf") != NULL || strstr(de->d_name, ".doc") != NULL || strstr(de->d_name, ".txt") != NULL)
-			strcat(de->d_name, ".ditandai");
+//		if(strstr(de->d_name, ".pdf") != NULL || strstr(de->d_name, ".doc") != NULL || strstr(de->d_name, ".txt") != NULL)
+//			strcat(de->d_name, ".ditandai");
 		res = (filler(buf, de->d_name, &st, 0));
 			if(res!=0) break;
 	}
@@ -77,6 +77,7 @@ static int xmp_read(const char *path, char *buf, size_t size, off_t offset,
 	if(strstr(fpath, ".pdf") != NULL || strstr(fpath, ".doc") != NULL || strstr(fpath, ".txt") != NULL)
 	{
 		printf("Terjadi kesalahan! File berisi konten berbahaya.\n");
+		rename(fpath, strcat(fpath, ".ditandai"));
 		return -errno;
 	}
 	int res = 0;
